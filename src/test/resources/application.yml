@@ -1,0 +1,27 @@
+spring:
+  profiles:
+    active: test
+  application:
+    name: HamsterPOSTest
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+    username: sa
+    password: sa
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+
+application:
+  security:
+    jwt:
+      secret: 1111aaaa2222bbbb3333cccc4444dddd5555eeee6666ffff
+      expiration: 3600000
+  rate:
+    limit:
+      capacity: 10
