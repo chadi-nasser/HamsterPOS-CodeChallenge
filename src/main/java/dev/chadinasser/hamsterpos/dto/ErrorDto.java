@@ -3,15 +3,16 @@ package dev.chadinasser.hamsterpos.dto;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class ErrorDto {
-    private String message;
+    private List<String> errors;
     private String path;
     private LocalDateTime timestamp;
 
-    public ErrorDto(String message, String path) {
-        this.message = message;
+    public ErrorDto(List<String> errors, String path) {
+        this.errors = errors;
         this.path = path;
         this.timestamp = LocalDateTime.now();
     }
