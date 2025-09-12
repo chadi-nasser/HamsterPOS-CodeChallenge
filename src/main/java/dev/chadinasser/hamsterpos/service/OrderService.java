@@ -6,6 +6,7 @@ import dev.chadinasser.hamsterpos.model.Product;
 import dev.chadinasser.hamsterpos.model.User;
 import dev.chadinasser.hamsterpos.repo.OrderRepo;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.stereotype.Service;
 
@@ -26,14 +27,6 @@ public class OrderService {
         return orderRepo.findAll();
     }
 
-    public Order findById(UUID id) {
-        return orderRepo.findById(id).orElse(null);
-    }
-
-    public Order findByIdWithItems(UUID id) {
-        return orderRepo.findByIdWithItems(id).orElse(null);
-    }
-
     @Transactional
     public Order createOrder(Order order, User currentUser) {
         order.setUser(currentUser);
@@ -46,7 +39,7 @@ public class OrderService {
         return orderRepo.save(order);
     }
 
-    public List<Order> findAllByUserId(UUID userId, PaginationParams paginationParams) {
+    public Page<Order> findAllByUserId(UUID userId, PaginationParams paginationParams) {
         try {
             return orderRepo.findAllByUser_Id(userId, paginationParams.toPageable());
         } catch (PropertyReferenceException e) {

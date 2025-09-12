@@ -1,6 +1,7 @@
 package dev.chadinasser.hamsterpos.controller.api;
 
 import dev.chadinasser.hamsterpos.dto.OrderDto;
+import dev.chadinasser.hamsterpos.dto.PagedDto;
 import dev.chadinasser.hamsterpos.dto.PaginationParams;
 import dev.chadinasser.hamsterpos.dto.ResponseDto;
 import dev.chadinasser.hamsterpos.mapper.OrderMapper;
@@ -9,12 +10,11 @@ import dev.chadinasser.hamsterpos.model.User;
 import dev.chadinasser.hamsterpos.service.OrderService;
 import dev.chadinasser.hamsterpos.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/orders")
@@ -37,13 +37,14 @@ public class OrderController {
     }
 
     @GetMapping("/me")
-    public ResponseDto<List<OrderDto>> getOrder(@Valid @ModelAttribute PaginationParams paginationParams, BindingResult bindingResult) {
+    public ResponseDto<PagedDto<?>> getOrder(@Valid @ModelAttribute PaginationParams paginationParams, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new IllegalArgumentException("Invalid pagination parameters: " + bindingResult.getFieldErrors().stream().map(FieldError::getField).toList());
         }
         User currentUser = userService.getAuthenticatedUser();
-        List<Order> orders = orderService.findAllByUserId(currentUser.getId(), paginationParams);
-        List<OrderDto> orderDtos = orders.stream().map(orderMapper::toDto).toList();
-        return new ResponseDto<>(HttpStatus.OK, orderDtos);
+        Page<Order> orders = orderService.findAllByUserId(currentUser.getId(), paginationParams);
+        Page<OrderDto> orderDtos = orders.map(orderMapper::toDto);
+        PagedDto<?> pagedDto = new PagedDto<>(orderDtos);
+        return new ResponseDto<>(HttpStatus.OK, pagedDto);
     }
 }
