@@ -1,9 +1,9 @@
 package dev.chadinasser.hamsterpos.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
 
 import java.util.UUID;
@@ -18,6 +18,6 @@ public class OrderItemDto {
     @Min(value = 1, message = "Quantity must be at least 1")
     private Integer quantity;
 
-    @PositiveOrZero(message = "Unit price must be non-negative")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Double unitPrice;
 }

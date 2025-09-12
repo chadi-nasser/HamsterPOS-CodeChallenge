@@ -2,6 +2,7 @@ package dev.chadinasser.hamsterpos.controller.api;
 
 import dev.chadinasser.hamsterpos.dto.ProductDto;
 import dev.chadinasser.hamsterpos.dto.ResponseDto;
+import dev.chadinasser.hamsterpos.mapper.ProductMapper;
 import dev.chadinasser.hamsterpos.model.Product;
 import dev.chadinasser.hamsterpos.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,9 +22,11 @@ import java.util.List;
 )
 public class ProductController {
     private final ProductService productService;
+    private final ProductMapper productMapper;
 
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService, ProductMapper productMapper) {
         this.productService = productService;
+        this.productMapper = productMapper;
     }
 
     @GetMapping
@@ -31,9 +34,8 @@ public class ProductController {
             summary = "Get All Products",
             description = "Retrieve a list of all products"
     )
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseDto<List<ProductDto>> getProducts() {
-        return new ResponseDto<>(HttpStatus.OK, productService.findAll().stream().map(new ProductDto()::fromEntity).toList());
+        return new ResponseDto<>(HttpStatus.OK, productService.findAll().stream().map(productMapper::toDto).toList());
     }
 
     @PostMapping
@@ -43,7 +45,7 @@ public class ProductController {
     )
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseDto<ProductDto> createProduct(@Valid @RequestBody ProductDto product) {
-        Product newProduct = productService.createProduct(product.toEntity());
-        return new ResponseDto<>(HttpStatus.CREATED, new ProductDto().fromEntity(newProduct));
+        Product newProduct = productService.createProduct(productMapper.toEntity(product));
+        return new ResponseDto<>(HttpStatus.CREATED, productMapper.toDto(newProduct));
     }
 }

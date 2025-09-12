@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -37,6 +38,17 @@ public class GlobalExceptionHandler {
     public ResponseDto<ErrorDto> handleException(BadCredentialsException ignored, HttpServletRequest request) {
         return createErrorResponse(new Exception("Invalid username or password"), request.getRequestURI(), HttpStatus.UNAUTHORIZED);
     }
+
+    @ExceptionHandler({AccessDeniedException.class})
+    public ResponseDto<ErrorDto> handleException(AccessDeniedException ignored, HttpServletRequest request) {
+        return createErrorResponse(new Exception("Access denied"), request.getRequestURI(), HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler({IllegalArgumentException.class})
+    public ResponseDto<ErrorDto> handleException(IllegalArgumentException e, HttpServletRequest request) {
+        return createErrorResponse(e, request.getRequestURI(), HttpStatus.BAD_REQUEST);
+    }
+
 
     @ExceptionHandler({ResourceAlreadyExistException.class})
     public ResponseDto<ErrorDto> handleException(ResourceAlreadyExistException e, HttpServletRequest request) {
