@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,7 +21,7 @@ public class OrderDto {
     private OrderStatus status;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Double totalPrice;
+    private BigDecimal totalPrice;
 
     @NotNull
     @Size(min = 1, message = "At least one item is required")

@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Data
@@ -19,5 +20,5 @@ public class OrderItemDto {
     private Integer quantity;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Double unitPrice;
+    private BigDecimal unitPrice;
 }

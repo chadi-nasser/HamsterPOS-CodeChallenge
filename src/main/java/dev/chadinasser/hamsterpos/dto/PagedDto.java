@@ -6,15 +6,15 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 @Getter
-public class PagedDto<T extends Page<?>> {
-    private final List<?> content;
+public class PagedDto<T> {
+    private final List<T> content;
     private final int pageNumber;
     private final int pageSize;
     private final long totalElements;
     private final int totalPages;
     private final boolean last;
 
-    public PagedDto(T content) {
+    public PagedDto(Page<T> content) {
         this.content = content.getContent();
         this.pageNumber = content.getNumber();
         this.pageSize = content.getSize();

@@ -2,7 +2,9 @@ package dev.chadinasser.hamsterpos.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.Formula;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -22,8 +24,8 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<OrderItem> items;
 
-    @Transient
-    private Double totalPrice;
+    @Formula("(select coalesce(sum(oi.unit_price * oi.quantity), 0) from order_items oi where oi.order_id = id)")
+    private BigDecimal totalPrice;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -34,13 +36,5 @@ public class Order {
     private void ensureDefaults() {
         if (status == null) status = OrderStatus.PENDING;
         if (items == null) items = new ArrayList<>();
-    }
-
-    public Double getTotalPrice() {
-        if (items == null) return 0.0;
-        return items.stream()
-                .mapToDouble(i -> (i.getUnitPrice() != null ? i.getUnitPrice() : 0.0)
-                        * (i.getQuantity() != null ? i.getQuantity() : 0))
-                .sum();
     }
 }

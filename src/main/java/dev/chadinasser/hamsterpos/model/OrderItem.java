@@ -3,6 +3,7 @@ package dev.chadinasser.hamsterpos.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
@@ -27,5 +28,5 @@ public class OrderItem {
     private Integer quantity;
 
     @Column(nullable = false)
-    private Double unitPrice;
+    private BigDecimal unitPrice;
 }

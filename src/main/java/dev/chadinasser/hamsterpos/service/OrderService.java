@@ -10,7 +10,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -23,8 +22,8 @@ public class OrderService {
         this.productService = productService;
     }
 
-    public List<Order> findAll() {
-        return orderRepo.findAll();
+    public Page<Order> findAll(PaginationParams paginationParams) {
+        return orderRepo.findAll(paginationParams.toPageable());
     }
 
     @Transactional

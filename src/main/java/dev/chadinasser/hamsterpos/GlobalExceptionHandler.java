@@ -5,9 +5,11 @@ import dev.chadinasser.hamsterpos.dto.ResponseDto;
 import dev.chadinasser.hamsterpos.exception.ResourceAlreadyExistException;
 import dev.chadinasser.hamsterpos.exception.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -29,6 +31,12 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler({PropertyReferenceException.class})
+    public ResponseDto<ErrorDto> handleException(PropertyReferenceException e, HttpServletRequest request) {
+        return createErrorResponse(new IllegalArgumentException("Invalid pagination parameters: " + e.getPropertyName()), request.getRequestURI(), HttpStatus.BAD_REQUEST);
+
+    }
+
     @ExceptionHandler({NoResourceFoundException.class})
     public ResponseDto<ErrorDto> handleException(NoResourceFoundException ignored, HttpServletRequest request) {
         return createErrorResponse(new Exception("Resource not found"), request.getRequestURI(), HttpStatus.NOT_FOUND);
@@ -37,6 +45,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({BadCredentialsException.class})
     public ResponseDto<ErrorDto> handleException(BadCredentialsException ignored, HttpServletRequest request) {
         return createErrorResponse(new Exception("Invalid username or password"), request.getRequestURI(), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler({AuthorizationDeniedException.class})
+    public ResponseDto<ErrorDto> handleException(AuthorizationDeniedException ignored, HttpServletRequest request) {
+        return createErrorResponse(new Exception("Unauthorized"), request.getRequestURI(), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler({AccessDeniedException.class})

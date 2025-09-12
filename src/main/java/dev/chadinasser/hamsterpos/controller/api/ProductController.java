@@ -1,5 +1,7 @@
 package dev.chadinasser.hamsterpos.controller.api;
 
+import dev.chadinasser.hamsterpos.dto.PagedDto;
+import dev.chadinasser.hamsterpos.dto.PaginationParams;
 import dev.chadinasser.hamsterpos.dto.ProductDto;
 import dev.chadinasser.hamsterpos.dto.ResponseDto;
 import dev.chadinasser.hamsterpos.mapper.ProductMapper;
@@ -8,11 +10,10 @@ import dev.chadinasser.hamsterpos.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/products")
@@ -32,10 +33,13 @@ public class ProductController {
     @GetMapping
     @Operation(
             summary = "Get All Products",
-            description = "Retrieve a list of all products"
+            description = "Retrieve a list of products"
     )
-    public ResponseDto<List<ProductDto>> getProducts() {
-        return new ResponseDto<>(HttpStatus.OK, productService.findAll().stream().map(productMapper::toDto).toList());
+    public ResponseDto<PagedDto<ProductDto>> getProducts(@Valid @ModelAttribute PaginationParams paginationParams) {
+        Page<Product> products = productService.findAll(paginationParams);
+        Page<ProductDto> productDtos = products.map(productMapper::toDto);
+        PagedDto<ProductDto> pagedDto = new PagedDto<>(productDtos);
+        return new ResponseDto<>(HttpStatus.OK, pagedDto);
     }
 
     @PostMapping

@@ -1,5 +1,6 @@
 package dev.chadinasser.hamsterpos.service;
 
+import dev.chadinasser.hamsterpos.exception.ResourceAlreadyExistException;
 import dev.chadinasser.hamsterpos.model.User;
 import dev.chadinasser.hamsterpos.repo.UserRepo;
 import org.springframework.security.core.Authentication;
@@ -18,6 +19,11 @@ public class UserService implements UserDetailsService {
     }
 
     public void addUser(User user) {
+        userRepo.findByUsername(user.getUsername()).ifPresent(
+                u -> {
+                    throw new ResourceAlreadyExistException("User", "username", user.getUsername());
+                }
+        );
         userRepo.save(user);
     }
 

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Data
@@ -16,7 +17,7 @@ public class ProductDto {
     private String name;
 
     @PositiveOrZero(message = "Price must be non-negative")
-    private Double price;
+    private BigDecimal price;
     @PositiveOrZero(message = "Stock must be non-negative")
     private Integer stock;
 }

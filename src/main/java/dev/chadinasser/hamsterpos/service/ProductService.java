@@ -1,13 +1,14 @@
 package dev.chadinasser.hamsterpos.service;
 
+import dev.chadinasser.hamsterpos.dto.PaginationParams;
 import dev.chadinasser.hamsterpos.exception.ResourceAlreadyExistException;
 import dev.chadinasser.hamsterpos.exception.ResourceNotFoundException;
 import dev.chadinasser.hamsterpos.model.Product;
 import dev.chadinasser.hamsterpos.repo.ProductRepo;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -18,8 +19,8 @@ public class ProductService {
         this.productRepo = productRepo;
     }
 
-    public List<Product> findAll() {
-        return productRepo.findAll();
+    public Page<Product> findAll(PaginationParams paginationParams) {
+        return productRepo.findAll(paginationParams.toPageable());
     }
 
     public Product findById(UUID id) {
@@ -38,7 +39,7 @@ public class ProductService {
     }
 
     @Transactional
-    public void decreaseStock(UUID productId, int quantity) {
+    public void decreaseStock(UUID productId, Integer quantity) {
         Product product = productRepo.findById(productId).orElseThrow(
                 () -> new ResourceNotFoundException("Product", "id", productId)
         );
@@ -49,7 +50,7 @@ public class ProductService {
         productRepo.save(product);
     }
 
-    public List<Product> findAllWithStockLessThan(int stock) {
-        return productRepo.findAllByStockLessThan(stock);
+    public Page<Product> findAllWithStockLessThan(Integer threshold, PaginationParams paginationParams) {
+        return productRepo.findAllByStockLessThan(threshold, paginationParams.toPageable());
     }
 }
