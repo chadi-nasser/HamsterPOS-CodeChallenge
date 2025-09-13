@@ -2,6 +2,7 @@ package dev.chadinasser.hamsterpos.controller.api;
 
 import dev.chadinasser.hamsterpos.dto.AuthRequestDto;
 import dev.chadinasser.hamsterpos.dto.AuthResponseDto;
+import dev.chadinasser.hamsterpos.dto.RefreshTokenRequestDto;
 import dev.chadinasser.hamsterpos.dto.ResponseDto;
 import dev.chadinasser.hamsterpos.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,5 +45,27 @@ public class AuthController {
     )
     public ResponseDto<AuthResponseDto> register(@Valid @RequestBody AuthRequestDto registerRequest) {
         return new ResponseDto<>(HttpStatus.CREATED, authService.register(registerRequest));
+    }
+
+    @PostMapping("/refresh")
+    @Operation(
+            summary = "Refresh Token",
+            description = "Refresh JWT token using a valid refresh token",
+            security = {}
+    )
+    public ResponseDto<AuthResponseDto> refreshToken(@Valid @RequestBody RefreshTokenRequestDto refreshTokenRequest) {
+        return new ResponseDto<>(HttpStatus.OK, authService.refreshToken(refreshTokenRequest));
+    }
+
+    @PostMapping("/logout")
+    @Operation(
+            summary = "User Logout",
+            description = "Logout user and invalidate refresh token"
+    )
+    public ResponseDto<Void> logout(@Valid @RequestBody RefreshTokenRequestDto refreshTokenRequest) {
+        System.out.println("Logout request received for token: " + refreshTokenRequest.getRefreshToken());
+        authService.logout(refreshTokenRequest);
+        System.out.println("Logout successful for token: " + refreshTokenRequest.getRefreshToken());
+        return new ResponseDto<>(HttpStatus.OK, null);
     }
 }

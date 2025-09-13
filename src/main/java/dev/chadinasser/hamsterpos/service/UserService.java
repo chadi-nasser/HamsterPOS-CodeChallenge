@@ -1,6 +1,7 @@
 package dev.chadinasser.hamsterpos.service;
 
 import dev.chadinasser.hamsterpos.exception.ResourceAlreadyExistException;
+import dev.chadinasser.hamsterpos.exception.ResourceNotFoundException;
 import dev.chadinasser.hamsterpos.model.User;
 import dev.chadinasser.hamsterpos.repo.UserRepo;
 import org.springframework.security.core.Authentication;
@@ -36,19 +37,15 @@ public class UserService implements UserDetailsService {
     }
 
     public User findByUsername(String username) {
-        return userRepo.findByUsername(username).orElse(null);
+        return userRepo.findByUsername(username).orElseThrow(
+                () -> new ResourceNotFoundException("User", "username", username)
+        );
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        try {
-            User user = userRepo.findByUsername(username).orElse(null);
-            if (user == null) {
-                throw new UsernameNotFoundException("User not found: " + username);
-            }
-            return user;
-        } catch (Exception e) {
-            throw new UsernameNotFoundException("User not found: " + username, e);
-        }
+        return userRepo.findByUsername(username).orElseThrow(
+                () -> new UsernameNotFoundException("User not found with username: " + username)
+        );
     }
 }
