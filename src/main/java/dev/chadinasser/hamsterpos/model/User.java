@@ -26,10 +26,13 @@ public class User implements UserDetails {
     @UuidGenerator
     @Column(updatable = false, nullable = false)
     private UUID id;
+
     @Column(unique = true, nullable = false)
-    private String username;
+    private String email;
+
     @Column(nullable = false)
     private String password;
+
     @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "role_id", referencedColumnName = "id")
     private Role role;
@@ -43,5 +46,10 @@ public class User implements UserDetails {
     @Override
     public String getPassword() {
         return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return email; // Use email as username for Spring Security
     }
 }

@@ -20,9 +20,9 @@ public class UserService implements UserDetailsService {
     }
 
     public void addUser(User user) {
-        userRepo.findByUsername(user.getUsername()).ifPresent(
+        userRepo.findByEmail(user.getEmail()).ifPresent(
                 u -> {
-                    throw new ResourceAlreadyExistException("User", "username", user.getUsername());
+                    throw new ResourceAlreadyExistException("User", "email", user.getEmail());
                 }
         );
         userRepo.save(user);
@@ -36,16 +36,16 @@ public class UserService implements UserDetailsService {
         return (User) auth.getPrincipal();
     }
 
-    public User findByUsername(String username) {
-        return userRepo.findByUsername(username).orElseThrow(
-                () -> new ResourceNotFoundException("User", "username", username)
+    public User findByEmail(String email) {
+        return userRepo.findByEmail(email).orElseThrow(
+                () -> new ResourceNotFoundException("User", "email", email)
         );
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepo.findByUsername(username).orElseThrow(
-                () -> new UsernameNotFoundException("User not found with username: " + username)
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return userRepo.findByEmail(email).orElseThrow(
+                () -> new UsernameNotFoundException("User not found with email: " + email)
         );
     }
 }

@@ -32,13 +32,13 @@ public class JwtService {
         this.refreshTokenRepo = refreshTokenRepo;
     }
 
-    public String generateAccessToken(String username) {
-        return generateToken(username, accessTokenExpiration, JwtTokenType.ACCESS);
+    public String generateAccessToken(String email) {
+        return generateToken(email, accessTokenExpiration, JwtTokenType.ACCESS);
     }
 
     @Transactional
-    public String generateRefreshToken(String username) {
-        String token = generateToken(username, refreshTokenExpiration, JwtTokenType.REFRESH);
+    public String generateRefreshToken(String email) {
+        String token = generateToken(email, refreshTokenExpiration, JwtTokenType.REFRESH);
 
         // Save the refresh token to database with expiration time
         RefreshToken refreshToken = new RefreshToken();
@@ -49,9 +49,9 @@ public class JwtService {
         return token;
     }
 
-    public String generateToken(String username, long expirationTime, JwtTokenType tokenType) {
+    public String generateToken(String email, long expirationTime, JwtTokenType tokenType) {
         return Jwts.builder()
-                .subject(username)
+                .subject(email)
                 .claim("type", tokenType.name())
                 .issuedAt(Date.from(Instant.now()))
                 .expiration(Date.from(Instant.now().plusMillis(expirationTime))) // Token valid for 1 hour
@@ -88,12 +88,12 @@ public class JwtService {
     }
 
     public boolean isTokenValid(String token, User userDetails) {
-        final String username = extractUsername(token);
+        final String email = extractEmail(token);
         JwtTokenType tokenType = extractTokenType(token);
         if (tokenType != JwtTokenType.ACCESS) {
             return false;
         }
-        return (username.equals(userDetails.getUsername())) && isNotTokenExpired(token);
+        return (email.equals(userDetails.getUsername())) && isNotTokenExpired(token);
     }
 
     private boolean isNotTokenExpired(String token) {
@@ -104,7 +104,7 @@ public class JwtService {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    public String extractUsername(String token) {
+    public String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 

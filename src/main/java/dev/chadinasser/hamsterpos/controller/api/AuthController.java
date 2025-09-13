@@ -1,9 +1,6 @@
 package dev.chadinasser.hamsterpos.controller.api;
 
-import dev.chadinasser.hamsterpos.dto.AuthRequestDto;
-import dev.chadinasser.hamsterpos.dto.AuthResponseDto;
-import dev.chadinasser.hamsterpos.dto.RefreshTokenRequestDto;
-import dev.chadinasser.hamsterpos.dto.ResponseDto;
+import dev.chadinasser.hamsterpos.dto.*;
 import dev.chadinasser.hamsterpos.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,27 +30,27 @@ public class AuthController {
             description = "Authenticate user and return JWT token",
             security = {}
     )
-    public ResponseDto<AuthResponseDto> login(@Valid @RequestBody AuthRequestDto authRequest) {
+    public ResponseDto<LoginResponseDto> login(@Valid @RequestBody AuthRequestDto authRequest) {
         return new ResponseDto<>(HttpStatus.OK, authService.login(authRequest));
     }
 
     @PostMapping("/register")
     @Operation(
             summary = "User Registration",
-            description = "Register a new user and return JWT token",
+            description = "Register a new user and return user info",
             security = {}
     )
-    public ResponseDto<AuthResponseDto> register(@Valid @RequestBody AuthRequestDto registerRequest) {
+    public ResponseDto<RegisterResponseDto> register(@Valid @RequestBody AuthRequestDto registerRequest) {
         return new ResponseDto<>(HttpStatus.CREATED, authService.register(registerRequest));
     }
 
     @PostMapping("/refresh")
     @Operation(
-            summary = "Refresh Token",
-            description = "Refresh JWT token using a valid refresh token",
+            summary = "Refresh Access Token",
+            description = "Generate a new access token using a valid refresh token",
             security = {}
     )
-    public ResponseDto<AuthResponseDto> refreshToken(@Valid @RequestBody RefreshTokenRequestDto refreshTokenRequest) {
+    public ResponseDto<LoginResponseDto> refreshToken(@Valid @RequestBody RefreshTokenRequestDto refreshTokenRequest) {
         return new ResponseDto<>(HttpStatus.OK, authService.refreshToken(refreshTokenRequest));
     }
 

@@ -1,8 +1,6 @@
 package dev.chadinasser.hamsterpos.service;
 
-import dev.chadinasser.hamsterpos.dto.AuthRequestDto;
-import dev.chadinasser.hamsterpos.dto.AuthResponseDto;
-import dev.chadinasser.hamsterpos.dto.RefreshTokenRequestDto;
+import dev.chadinasser.hamsterpos.dto.*;
 import dev.chadinasser.hamsterpos.exception.InvalidRefreshTokenException;
 import dev.chadinasser.hamsterpos.model.Role;
 import dev.chadinasser.hamsterpos.model.RoleType;
@@ -33,53 +31,51 @@ public class AuthService {
         this.authenticationManager = authenticationManager;
     }
 
-    private AuthResponseDto generateBothTokensForUser(String username) {
-        String accessToken = jwtService.generateAccessToken(username);
-        String refreshToken = jwtService.generateRefreshToken(username);
-        return AuthResponseDto.builder().accessToken(accessToken).refreshToken(refreshToken).build();
+    private LoginResponseDto generateBothTokensForUser(String email) {
+        String accessToken = jwtService.generateAccessToken(email);
+        String refreshToken = jwtService.generateRefreshToken(email);
+        return new LoginResponseDto(accessToken, refreshToken);
     }
 
     @Transactional
-    public AuthResponseDto register(AuthRequestDto request) {
+    public RegisterResponseDto register(AuthRequestDto request) {
         Optional<Role> role = roleService.findByRole(RoleType.USER);
         if (role.isEmpty()) {
-            return null;
+            throw new RuntimeException("Default USER role not found");
         }
 
         User user = User.builder()
-                .username(request.getUsername())
+                .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(role.get()).build();
 
         userService.addUser(user);
-        return generateBothTokensForUser(user.getUsername());
+        return new RegisterResponseDto(user.getId(), user.getEmail());
     }
 
     @Transactional
-    public AuthResponseDto login(AuthRequestDto request) {
+    public LoginResponseDto login(AuthRequestDto request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.getUsername(),
+                        request.getEmail(),
                         request.getPassword()
                 )
         );
 
         // If the above line does not throw an exception, the user is authenticated
-        User user = userService.findByUsername(request.getUsername());
-
-        return generateBothTokensForUser(user.getUsername());
+        User user = userService.findByEmail(request.getEmail());
+        return generateBothTokensForUser(user.getEmail());
     }
 
-    public AuthResponseDto refreshToken(RefreshTokenRequestDto request) {
+    public LoginResponseDto refreshToken(RefreshTokenRequestDto request) {
         if (!jwtService.isRefreshTokenValid(request.getRefreshToken())) {
             throw new InvalidRefreshTokenException();
         }
-        String username = jwtService.extractUsername(request.getRefreshToken());
-        String accessToken = jwtService.generateAccessToken(username);
-        return AuthResponseDto.builder().accessToken(accessToken).build();
+        String email = jwtService.extractEmail(request.getRefreshToken());
+        String accessToken = jwtService.generateAccessToken(email);
+        return new LoginResponseDto(accessToken, null);
     }
 
-    @Transactional
     public void logout(RefreshTokenRequestDto request) {
         jwtService.invalidateRefreshToken(request.getRefreshToken());
     }

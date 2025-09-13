@@ -1,17 +1,12 @@
 package dev.chadinasser.hamsterpos.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
 @AllArgsConstructor
-@NoArgsConstructor
-@Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class AuthResponseDto {
+public class LoginResponseDto {
     private String accessToken;
     private String refreshToken;
 }

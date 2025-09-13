@@ -21,8 +21,8 @@ public class AdminSeeder implements ApplicationListener<ContextRefreshedEvent> {
     private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;
 
-    @Value("${application.admin.username}")
-    private String adminUsername;
+    @Value("${application.admin.email}")
+    private String adminEmail;
     @Value("${application.admin.password}")
     private String adminPassword;
 
@@ -40,9 +40,9 @@ public class AdminSeeder implements ApplicationListener<ContextRefreshedEvent> {
     private void createAdminstrator() {
         Role adminRole = roleRepo.findByName(RoleType.ADMIN)
                 .orElseThrow(() -> new RuntimeException("Admin role not found"));
-        if (userRepo.findByUsername(adminUsername).isEmpty()) {
+        if (userRepo.findByEmail(adminEmail).isEmpty()) {
             var user = User.builder()
-                    .username(adminUsername)
+                    .email(adminEmail)
                     .password(passwordEncoder.encode(adminPassword))
                     .role(adminRole)
                     .build();
