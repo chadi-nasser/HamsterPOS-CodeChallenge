@@ -12,8 +12,12 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "role_seq")
     @Column(updatable = false, nullable = false)
     private Long id;
-
     @Column(unique = true, nullable = false)
     @Enumerated(EnumType.STRING)
     private RoleType name;
+
+    public enum RoleType {
+        ADMIN,
+        USER
+    }
 }

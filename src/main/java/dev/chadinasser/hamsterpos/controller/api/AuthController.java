@@ -60,9 +60,7 @@ public class AuthController {
             description = "Logout user and invalidate refresh token"
     )
     public ResponseDto<Void> logout(@Valid @RequestBody RefreshTokenRequestDto refreshTokenRequest) {
-        System.out.println("Logout request received for token: " + refreshTokenRequest.getRefreshToken());
         authService.logout(refreshTokenRequest);
-        System.out.println("Logout successful for token: " + refreshTokenRequest.getRefreshToken());
         return new ResponseDto<>(HttpStatus.OK, null);
     }
 }

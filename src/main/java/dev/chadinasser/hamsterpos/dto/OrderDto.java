@@ -2,7 +2,7 @@ package dev.chadinasser.hamsterpos.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import dev.chadinasser.hamsterpos.model.OrderStatus;
+import dev.chadinasser.hamsterpos.model.Order.OrderStatus;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -21,7 +21,7 @@ public class OrderDto {
     private OrderStatus status;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private BigDecimal totalPrice;
+    private BigDecimal totalAmount;
 
     @NotNull
     @Size(min = 1, message = "At least one item is required")

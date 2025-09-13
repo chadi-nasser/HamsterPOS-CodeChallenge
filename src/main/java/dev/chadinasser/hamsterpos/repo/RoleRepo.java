@@ -1,7 +1,7 @@
 package dev.chadinasser.hamsterpos.repo;
 
 import dev.chadinasser.hamsterpos.model.Role;
-import dev.chadinasser.hamsterpos.model.RoleType;
+import dev.chadinasser.hamsterpos.model.Role.RoleType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

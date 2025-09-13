@@ -1,7 +1,7 @@
 package dev.chadinasser.hamsterpos.bootstrap;
 
 import dev.chadinasser.hamsterpos.model.Role;
-import dev.chadinasser.hamsterpos.model.RoleType;
+import dev.chadinasser.hamsterpos.model.Role.RoleType;
 import dev.chadinasser.hamsterpos.repo.RoleRepo;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Profile;

@@ -1,9 +1,12 @@
 package dev.chadinasser.hamsterpos.service;
 
-import dev.chadinasser.hamsterpos.dto.*;
+import dev.chadinasser.hamsterpos.dto.AuthRequestDto;
+import dev.chadinasser.hamsterpos.dto.LoginResponseDto;
+import dev.chadinasser.hamsterpos.dto.RefreshTokenRequestDto;
+import dev.chadinasser.hamsterpos.dto.RegisterResponseDto;
 import dev.chadinasser.hamsterpos.exception.InvalidRefreshTokenException;
 import dev.chadinasser.hamsterpos.model.Role;
-import dev.chadinasser.hamsterpos.model.RoleType;
+import dev.chadinasser.hamsterpos.model.Role.RoleType;
 import dev.chadinasser.hamsterpos.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -68,15 +71,15 @@ public class AuthService {
     }
 
     public LoginResponseDto refreshToken(RefreshTokenRequestDto request) {
-        if (!jwtService.isRefreshTokenValid(request.getRefreshToken())) {
+        if (!jwtService.isRefreshTokenValid(request.refreshToken())) {
             throw new InvalidRefreshTokenException();
         }
-        String email = jwtService.extractEmail(request.getRefreshToken());
+        String email = jwtService.extractEmail(request.refreshToken());
         String accessToken = jwtService.generateAccessToken(email);
         return new LoginResponseDto(accessToken, null);
     }
 
     public void logout(RefreshTokenRequestDto request) {
-        jwtService.invalidateRefreshToken(request.getRefreshToken());
+        jwtService.invalidateRefreshToken(request.refreshToken());
     }
 }

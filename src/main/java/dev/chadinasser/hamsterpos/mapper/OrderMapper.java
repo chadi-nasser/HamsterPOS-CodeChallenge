@@ -16,7 +16,6 @@ public class OrderMapper implements EntityMapper<Order, OrderDto> {
     public Order toEntity(OrderDto dto) {
         Order order = new Order();
         order.setId(dto.getId());
-        order.setStatus(dto.getStatus());
 
         if (dto.getItems() != null) {
             List<OrderItem> entityItems = new ArrayList<>(dto.getItems().size());
@@ -26,7 +25,6 @@ public class OrderMapper implements EntityMapper<Order, OrderDto> {
                 p.setId(i.getProductId());
                 oi.setProduct(p);
                 oi.setQuantity(i.getQuantity());
-                oi.setUnitPrice(i.getUnitPrice());
                 oi.setOrder(order);
                 entityItems.add(oi);
             }
@@ -41,7 +39,7 @@ public class OrderMapper implements EntityMapper<Order, OrderDto> {
         OrderDto dto = new OrderDto();
         dto.setId(entity.getId());
         dto.setStatus(entity.getStatus());
-        dto.setTotalPrice(entity.getTotalPrice());
+        dto.setTotalAmount(entity.getTotalAmount());
 
         if (entity.getItems() != null) {
             List<OrderItemDto> dtoItems = new ArrayList<>(entity.getItems().size());

@@ -3,6 +3,7 @@ package dev.chadinasser.hamsterpos.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -10,6 +11,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "products")
 @Data
+@NoArgsConstructor
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -23,6 +25,12 @@ public class Product {
 
     @Column(nullable = false)
     private Integer stock;
+
+    public Product(String name, BigDecimal price) {
+        this.name = name;
+        this.price = price;
+        this.stock = 0; // Default stock to 0 if not provided
+    }
 
     @PrePersist
     @PreUpdate
